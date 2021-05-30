@@ -39,8 +39,8 @@ def main():
                 curField["indexed"]=True
                 curField["stored"]=True
                 toCreate.append(curField)
-        
-        print(toCreate)
+        print("******")
+        # print(toCreate)
         # #creating the fields
         data = {
         "add-field": toCreate
@@ -53,17 +53,20 @@ def main():
         
 
 
+        # print(req)
         #inserting documents
 
         headers={"Content-Type":"application/json"}
 
+        
 
-        docs=[]
-        for i in req:
-            docs.append(i)
+
+        docs=[{k:v for k,v in req.items()}]
         print(docs)
-        # requests.post("http://localhost:8983/solr/${coreName}/update?commit=true",docs,headers=headers)
+    
+        res=requests.post("http://localhost:8983/solr/core1/update?commit=true",str(docs),headers=headers)
 
+        print(res.text)
         
         # print(toCreate)
 
