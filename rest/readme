@@ -1,0 +1,10 @@
+#BUILDING AND RUNNING LOCALLY
+docker build -t rest_api . 
+docker run -p 3001:3001 rest_api
+
+#PUSHING DOCKER IMAGE TO HUB
+docker tag <image_id> marigala/rest_api:<version>
+docker push marigala/rest_api:<version>
+
+#BUILDING AND RUNNING USING DOCKER HUB IMAGE
+docker run -p 5000:3001 marigala/rest_api:v0
