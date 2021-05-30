@@ -28,8 +28,10 @@ def upload_file():
         parsed = None
         if(format == 'json'):
             parsed = json.loads(content)
+            parsed=json.dumps(parsed)
+            # print(parsed)
         else:
-            parsed = {'Text': content}
+            parsed = {"Text": content}
         connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
         channel = connection.channel()
         channel.queue_declare(queue='upload')
