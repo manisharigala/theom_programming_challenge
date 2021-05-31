@@ -1,0 +1,36 @@
+version: '3'
+services: 
+    solr:
+        container_name: solr
+        build:
+            dockerfile: Dockerfile
+            context: ./solr
+        image: customsolr
+        networks: 
+            - fulltextsearch
+    rabbitmq:
+        container_name: rabbit
+        image: rabbitmq:3-management
+        networks: 
+            - fulltextsearch
+    restserver:
+        container_name: rest
+        image: restserver
+        build:
+            dockerfile: Dockerfile
+            context: ./rest
+        ports: 
+            - "3001:3001"
+        networks: 
+            - fulltextsearch
+    writeservice:
+        container_name: writeservice
+        image: writeservice
+        build:
+            dockerfile: Dockerfile
+            context: ./write
+        networks:
+            - fulltextsearch
+networks: 
+    fulltextsearch:
+        name: fulltextsearch
