@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, make_response
-import json,requests
+import json,requests,os
 import pika
 
 app = Flask(__name__)
@@ -36,7 +36,7 @@ def upload_file():
             parsed = {"Text": content.decode("utf-8"),"__type":"text"}
             parsed=json.dumps(parsed)
 
-        connection = pika.BlockingConnection(pika.ConnectionParameters('rabbit'))
+        connection = pika.BlockingConnection(pika.ConnectionParameters(os.environ['RABBIT_ADDRESS']))
         channel = connection.channel()
         channel.queue_declare(queue='upload')
         channel.basic_publish(exchange='',
@@ -49,9 +49,11 @@ def upload_file():
 
 @app.route('/search')
 def search():
+    coreName=os.environ["CORE_NAME"]
+    solrAddress=os.environ["SOLR_ADDRESS"]
     query=request.json['query']
 
-    res=requests.get("http://solr:8983/solr/core1/select?q="+query+"&wt=json")
+    res=requests.get("http://"+solrAddress+":8983/solr/"+coreName+"/select?q="+query+"&wt=json")
     
     return make_response(jsonify(json.loads(res.text)),200)
 

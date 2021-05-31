@@ -1,10 +1,23 @@
-import pika, sys, os,json,requests
+import pika, sys, os,json,requests,time
 
 def main():
-    connection = pika.BlockingConnection(pika.ConnectionParameters('rabbit'))
-    channel = connection.channel()
+    connection,channel=None,None
+    count=0
+    while True:
+        try:
+            connection = pika.BlockingConnection(pika.ConnectionParameters(os.environ['RABBIT_ADDRESS']))
+            channel = connection.channel()
+            break
+        except:
+            print("trying.....")
+            if count>5:
+                raise Exception("Cannot establish connection!")
+                exit(0)
+            time.sleep(2)
+            count+=1
+            continue
 
-    channel.queue_declare(queue="upload")
+    channel.queue_declare(queue=os.environ["QUEUE_NAME"])
 
     def callback(ch, method, properties, body):
 
@@ -21,9 +34,11 @@ def main():
         del frequest['__type']
         req=frequest
 
-            #Fetching the schema
-        coreName="core1"
-        resp = requests.get("http://solr:8983/solr/core1/schema/fields?wt=json")
+        #Fetching the schema
+        
+        coreName=os.environ['CORE_NAME']
+        solrAddress=os.environ['SOLR_ADDRESS']
+        resp = requests.get("http://"+solrAddress+":8983/solr/"+coreName+"/schema/fields?wt=json")
         
 
         # #Fetching the fields
@@ -46,7 +61,6 @@ def main():
                 curField["indexed"]=True
                 curField["stored"]=True
                 toCreate.append(curField)
-        print("******")
         # print(toCreate)
         # #creating the fields
         data = {
@@ -55,7 +69,7 @@ def main():
         
         # print(data)
         if len(toCreate)!=0:
-            res=requests.post("http://solr:8983/solr/core1/schema",str(data))
+            res=requests.post("http://"+solrAddress+":8983/solr/"+coreName+"/schema",str(data))
             print(res)
         
 
@@ -71,7 +85,7 @@ def main():
         docs=[{k:v for k,v in req.items()}]
         print(docs)
     
-        res=requests.post("http://solr:8983/solr/core1/update?commit=true",str(docs),headers=headers)
+        res=requests.post("http://"+solrAddress+":8983/solr/core1/update?commit=true",str(docs),headers=headers)
 
         print(res.text)
         

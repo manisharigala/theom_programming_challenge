@@ -4,6 +4,8 @@ services:
         container_name: solr
         ports: 
             - "8983:8983"
+        depends_on: 
+            - rabbitmq
         build:
             dockerfile: Dockerfile
             context: ./solr
@@ -21,6 +23,13 @@ services:
     restserver:
         container_name: rest
         image: restserver
+        environment: 
+            - QUEUE_NAME=upload
+            - SOLR_ADDRESS=solr
+            - RABBIT_ADDRESS=rabbit
+            - CORE_NAME=core1
+        depends_on: 
+            - rabbitmq
         build:
             dockerfile: Dockerfile
             context: ./rest
@@ -31,11 +40,19 @@ services:
     writeservice:
         container_name: writeservice
         image: writeservice
+        environment: 
+            - QUEUE_NAME=upload
+            - SOLR_ADDRESS=solr
+            - RABBIT_ADDRESS=rabbit
+            - CORE_NAME=core1
         build:
             dockerfile: Dockerfile
             context: ./write
         networks:
             - fulltextsearch
+        depends_on: 
+            - rabbitmq
+            - solr
 networks: 
     fulltextsearch:
         name: fulltextsearch
