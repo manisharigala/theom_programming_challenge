@@ -12,7 +12,7 @@ def file_sanity_check(file):
 
 @app.route('/')
 def hello_world():
-    return 'Hello, World!'
+    return 'Theom.ai programming challenge - Searching and Indexing'
 
 @app.route('/upload', methods = ['POST'])
 def upload_file():
@@ -52,8 +52,9 @@ def search():
     coreName=os.environ["CORE_NAME"]
     solrAddress=os.environ["SOLR_ADDRESS"]
     query=request.json['query']
+    limit = "10"
 
-    res=requests.get("http://"+solrAddress+":8983/solr/"+coreName+"/select?q="+query+"&wt=json")
+    res=requests.get("http://"+solrAddress+":8983/solr/"+coreName+"/select?q="+query+"&wt=json"+"&rows="+limit)
     
     return make_response(jsonify(json.loads(res.text)),200)
 
