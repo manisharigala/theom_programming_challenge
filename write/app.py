@@ -9,12 +9,21 @@ def main():
     def callback(ch, method, properties, body):
 
 
-        #parsing message request
-        req=json.loads(body)
-        
- 
+        print(properties,method)
 
-        #Fetching the schema
+        #parsing message request
+        print("BODY : " , body)
+        print("TYPE : " , type(body))
+        frequest=json.loads(body)
+        print(frequest)
+        # req=json.loads(body)
+
+        typ=frequest['__type']
+
+        del frequest['__type']
+        req=frequest
+
+            #Fetching the schema
         coreName="core1"
         resp = requests.get("http://localhost:8983/solr/core1/schema/fields?wt=json")
         
@@ -23,7 +32,7 @@ def main():
 
         fields = json.loads(resp.text)['fields']
         # print(fields)
- 
+
 
         #checking out what fields to create
         toCreate=[]
@@ -73,6 +82,7 @@ def main():
 
         # print(req)
         # print(" [x] Received %r" % body)
+
 
     channel.basic_consume(queue='upload', on_message_callback=callback, auto_ack=True)
 
