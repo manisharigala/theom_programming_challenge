@@ -12,8 +12,6 @@ def main():
         print(properties,method)
 
         #parsing message request
-        print("BODY : " , body)
-        print("TYPE : " , type(body))
         frequest=json.loads(body)
         print(frequest)
         # req=json.loads(body)

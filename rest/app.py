@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, make_response
-import json
+import json,requests
 import pika
 
 app = Flask(__name__)
@@ -49,6 +49,11 @@ def upload_file():
 
 @app.route('/search')
 def search():
+    query=request.json['query']
+
+    res=requests.get("http://localhost:8983/solr/core1/select?q="+query+"&wt=json")
+    
+    return make_response(json.loads(res.text),200)
     return 'Hello, World!'
 
 if __name__ == "__main__":
