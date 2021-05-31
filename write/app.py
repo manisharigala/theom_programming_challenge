@@ -1,10 +1,10 @@
 import pika, sys, os,json,requests
 
 def main():
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+    connection = pika.BlockingConnection(pika.ConnectionParameters('rabbit'))
     channel = connection.channel()
 
-    channel.queue_declare(queue='upload')
+    channel.queue_declare(queue="upload")
 
     def callback(ch, method, properties, body):
 
@@ -23,7 +23,7 @@ def main():
 
             #Fetching the schema
         coreName="core1"
-        resp = requests.get("http://localhost:8983/solr/core1/schema/fields?wt=json")
+        resp = requests.get("http://solr:8983/solr/core1/schema/fields?wt=json")
         
 
         # #Fetching the fields
@@ -55,7 +55,7 @@ def main():
         
         # print(data)
         if len(toCreate)!=0:
-            res=requests.post("http://localhost:8983/solr/core1/schema",str(data))
+            res=requests.post("http://solr:8983/solr/core1/schema",str(data))
             print(res)
         
 
@@ -71,7 +71,7 @@ def main():
         docs=[{k:v for k,v in req.items()}]
         print(docs)
     
-        res=requests.post("http://localhost:8983/solr/core1/update?commit=true",str(docs),headers=headers)
+        res=requests.post("http://solr:8983/solr/core1/update?commit=true",str(docs),headers=headers)
 
         print(res.text)
         

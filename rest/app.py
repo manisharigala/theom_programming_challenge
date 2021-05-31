@@ -36,7 +36,7 @@ def upload_file():
             parsed = {"Text": content.decode("utf-8"),"__type":"text"}
             parsed=json.dumps(parsed)
 
-        connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+        connection = pika.BlockingConnection(pika.ConnectionParameters('rabbit'))
         channel = connection.channel()
         channel.queue_declare(queue='upload')
         channel.basic_publish(exchange='',
@@ -51,10 +51,9 @@ def upload_file():
 def search():
     query=request.json['query']
 
-    res=requests.get("http://localhost:8983/solr/core1/select?q="+query+"&wt=json")
+    res=requests.get("http://solr:8983/solr/core1/select?q="+query+"&wt=json")
     
-    return make_response(json.loads(res.text),200)
-    return 'Hello, World!'
+    return make_response(jsonify(json.loads(res.text)),200)
 
 if __name__ == "__main__":
     app.run("0.0.0.0", port=3001, debug=True)
