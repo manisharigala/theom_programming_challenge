@@ -22,7 +22,8 @@ The solution is implemented via five components in docker containers conforming 
 5. **Solr** : Open source framework to index and search documents based on provided configurations. ElasticSearch was another popular option, however its better suits for streaming and timeseries data. Solr, better fits this project's use case. If the input document is JSON, all the fields are indexed and if the input document is txt, then its converted to JSON format by creating a text field that is indexed and all the text data is stored as value. Documents can be persisted and queried via SDK APIs which are then relayed back to the client.
 
 
-<<<**INSERT DIAGRAM**>>>
+## Architecture Diagram
+![alt text](https://github.com/manisharigala/theom_programming_challenge/blob/main/Images/architecture.png)
 
 ## Dependencies
 
