@@ -57,8 +57,8 @@ def main():
             if i not in existingFields:
                 curField={}
                 curField["name"]=str(i)
-                curField["type"]="string"
-                curField["indexed"]=True
+                curField["type"]="text_general"
+                curField["indexed"]=str(i) != 'raw'
                 curField["stored"]=True
                 toCreate.append(curField)
         # print(toCreate)
