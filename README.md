@@ -10,55 +10,74 @@ Below mentioned points pertain to the certain assumptions and/or constraints:
 - POST API is not a bulk upload but rather a single file upload operation.
 - Any existing open source solutions can be leverage for indexing and searching text within documents.
 - Solution is to be deployed via Docker containers.
+- All search operations are case insensitive.
+- Max. of 10 documents displayed after searching
 
 ## Design and Implementation
-The solution is implemented via three docker containers conforming to a micro-service architecture. Flask is is used an API layer while Solr indexes documents with respect to a pre-defined schema.
-1. **REST Controller** : Clients submit GET/POST request via the front end which are mapped to the REST controller. Based on request type, API calls are made to concerned micro-service. Failure and exception handling is implemented.
-2. **Rabbit MQ** : Keeping in mind to build a scalable and fault tolerant solution, Rabbit MQ is utilized as in intermediate messaging queue for indexing documents. Also, this is particularly helpful in order to not keep the client waiting during situations of long backend processing times. A consumer continuosly polls for new messages and completes the operation of indexing.
-3. **Solr Indexing** : Open source framework to index documents based on provided configurations. Documents can be persisted and queried via SDK APIs which are then relayed back to the client.
+The solution is implemented via five components in docker containers conforming to a micro-service architecture as shown in the architecture diagram. 
+1. **UI Server** : The User Interface is built using React.js to make the application available to the cliens. The client can upload documents (JSON/text) using file upload button. The client can search text using a search bar with option of choosing from a list of indexed fields or all indexed fields.
+2. **REST Server** : The REST Server is built using Flask. Clients submit GET/POST request via the front end which are mapped to the REST Server. Based on request type, API calls are made to concerned micro-service. Failure and exception handling is implemented.
+3. **Rabbit MQ** : Keeping in mind to build a scalable and fault tolerant solution, Rabbit MQ is utilized as a messaging queue for write process of documents. Also, this is particularly helpful in order to not keep the client waiting during situations of long backend processing times. The documents to be uploaded are pushed to the Rabbit MQ. the consumer(Write Server) continuosly polls for new documents and completes the operation of indexing.
+4. **Write Server** : The consumer(Write Server) continuosly polls for new documents in Rabbit MQ and completes the operation of inserting into Solr.
+5. **Solr** : Open source framework to index and search documents based on provided configurations. ElasticSearch was another popular option, however its better suits for streaming and timeseries data. Solr, better fits this project's use case. If the input document is JSON, all the fields are indexed and if the input document is txt, then its converted to JSON format by creating a text field that is indexed and all the text data is stored as value. Documents can be persisted and queried via SDK APIs which are then relayed back to the client.
+
 
 <<<**INSERT DIAGRAM**>>>
 
 ## Dependencies
-<<<Add info on imported packages like Flask, RMQ, Solr etc, along with version numbers and any useful links>>>
-| Dependency    | Version   | Link  |
-| ------------- |:-------------:|:-----:|
-| Flask     | .... | https://flask.palletsprojects.com/en/2.0.x/ |
-| Pika      | ..... | https://www.rabbitmq.com/tutorials/tutorial-one-python.html |
-| Solr | .... |    $1 |
+
+| Dependency    | Link  |
+| ------------- |-----:|
+| Flask     |  https://flask.palletsprojects.com/en/2.0.x/ |
+| Pika      | https://www.rabbitmq.com/tutorials/tutorial-one-python.html |
+| Solr |  https://solr.apache.org/  |
+| React.js | https://reactjs.org/ |
+| RabbitMQ | https://www.rabbitmq.com/ |
 
 ## Deployment
-All three docker containers are deployed to the same network and would talk to each other via the container name (internal DNS lookup for actual IP address), this achieved via settings configured within the docker file.
-### REST Docker
-Add command to invoke docker
-```
-command
-```
-
-### RMQ Docker
-Add command to invoke docker
-```
-command
-```
-
-### Solr Docker
-Add command to invoke docker
-```
-command
-```
-**High level Solr Configuration**
-......
+All five docker containers are deployed to the same network (fulltextsearch) and would talk to each other via the container name (internal DNS lookup for actual IP address), this achieved via the docker compose file. All the docker images are built and then are uploaded to Docker hub. The docker compose file spawns all the containers. 
 
 ## API Documention
 
 - **GET /**
-    - Landing page, dummy.
+    - Ping check to check REST Server is up
+    - Request
+        None
+    - Response
+        msg: String
+
 - **POST /upload**
-    - Upload JSON ot TXT file that is to be indexed for efficient search operations.
-    - Data is uploaded via a form on the frontend where body contains the input fie contents.
-    - Return a sucess `200 OK` once data is publihed to Rabbit MQ.
+    - Upload a file to SOLR
+    - Request
+        file : File [ByteArray, {.json, .txt}]
+    - Response
+        status : Number [200 OK, 400 Bad Request]
     
-- **GET /search**
-    - Request body will contain the "query" as the key with value being the "Solr search query" that is to be executed.
-    - Return `200 OK` on sucess, `500` on Invalid Query
+- **POST /search**
+    - Search key in docs and return list of matching docs
+    - Request
+        fields : String[] 
+        key: String
+    - Response
+        docs : Object[]
+
+- **GET /fields**
+    - Get list of indexed fields in SOLR Schema from uploaded docs
+    - Request 
+        None
+    - Response
+        fields : Object[].
+
+## Instructions to Invoke Application
+1. Clone the github repository.
+2. Open terminal in the root folder where the docker_compose.yaml file is present and run the following commands.
+    i. `docker-compose build`
+    ii. `docker-compose up -d `
+3. After the above commands are run and the services are spawned, please wait for about a minute because establishing connections to Solr and RabbitMQ might take a while.
+4. After waiting for a minute, navigate to `localhost:3000` to go to the application,
+5. Upload files using upload file buttion.
+6. Select the search tab to go to the search section.
+7. Select the index field to search on and enter the text to search in the search bar. Press Enter or click search icon to search.
+
+
 

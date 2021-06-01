@@ -25,11 +25,11 @@ def upload_file():
     # check file file is of correct format 
     sanityStatus = file_sanity_check(file)
     if sanityStatus:
-        print("HERE 1")
+
         parsed = readFile(file)
-        print("HERE 2")
+   
         publishToQueue('upload', str(parsed))
-        print("HERE 3")
+       
         return make_response("Upload success ==" + str(parsed),200)
     else:
         return make_response("File format not in required format",400)
