@@ -72,8 +72,8 @@ All five docker containers are deployed to the same network (fulltextsearch) and
 ## Instructions to Invoke Application
 1. Clone the github repository.
 2. Open terminal in the root folder where the docker_compose.yaml file is present and run the following commands.
-    i. `docker-compose build`
-    ii. `docker-compose up -d `
+   *`docker-compose build`
+   * `docker-compose up -d `
 3. After the above commands are run and the services are spawned, please wait for about a minute because establishing connections to Solr and RabbitMQ might take a while.
 4. After waiting for a minute, navigate to `localhost:3000` to go to the application,
 5. Upload files using upload file buttion.
