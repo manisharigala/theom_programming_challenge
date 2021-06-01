@@ -23,7 +23,6 @@ def hello_world():
 @app.route('/upload', methods = ['POST'])
 @cross_origin()
 def upload_file():
-    
     # check if the post request has the file part
     if 'file' not in request.files:
         return make_response("Bad Request",400)
@@ -33,7 +32,6 @@ def upload_file():
         #push to MQ
         content = file.read()
         parsed = None
-        
         if(format == 'json'):
             parsed = json.loads(content)
             parsed["raw"] = str(parsed)
