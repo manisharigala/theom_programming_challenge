@@ -6,7 +6,10 @@ services:
             - "8983:8983"
         depends_on: 
             - rabbitmq
-        image: marigala/customsolr
+        build:
+            dockerfile: Dockerfile
+            context: ./solr
+        image: customsolr
         networks: 
             - fulltextsearch
     rabbitmq:
@@ -19,7 +22,7 @@ services:
             - fulltextsearch
     restserver:
         container_name: rest
-        image: marigala/restserver
+        image: restserver
         environment: 
             - QUEUE_NAME=upload
             - SOLR_ADDRESS=solr
@@ -27,18 +30,24 @@ services:
             - CORE_NAME=core1
         depends_on: 
             - rabbitmq
+        build:
+            dockerfile: Dockerfile
+            context: ./rest
         ports: 
             - "3001:3001"
         networks: 
             - fulltextsearch
     writeservice:
         container_name: writeservice
-        image: marigala/writeservice
+        image: writeservice
         environment: 
             - QUEUE_NAME=upload
             - SOLR_ADDRESS=solr
             - RABBIT_ADDRESS=rabbit
             - CORE_NAME=core1
+        build:
+            dockerfile: Dockerfile
+            context: ./write
         networks:
             - fulltextsearch
         depends_on: 
@@ -46,7 +55,9 @@ services:
             - solr
     ui:
         container_name: ui
-        image: marigala/ui
+        build:
+            context: ./frontend
+            dockerfile: Dockerfile
         ports:
             - '3000:3000'
         networks: 
