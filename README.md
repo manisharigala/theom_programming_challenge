@@ -83,7 +83,7 @@ All five docker containers are deployed to the same network (fulltextsearch) and
 
 
 ## Note
-1. Four Sample JSON documents are inserted at the start of the application and can be found at the root directory named **sample_input_docs.zip**.
+1. By default, four Sample JSON documents are inserted at the start of the application and the same files can be found at the root directory named **sample_input_docs.zip**.
 
 
 
