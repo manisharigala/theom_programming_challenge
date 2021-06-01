@@ -79,6 +79,11 @@ All five docker containers are deployed to the same network (fulltextsearch) and
 5. Upload files using upload file buttion.
 6. Select the search tab to go to the search section.
 7. Select the index field to search on and enter the text to search in the search bar. Press Enter or click search icon to search.
+8. You can view the raw document for each result by clicking on the down arrow.
+
+
+## Note
+1. Four Sample JSON documents are inserted at the start of the application and can be found at the root directory named **sample_input_docs.zip**.
 
 
 
