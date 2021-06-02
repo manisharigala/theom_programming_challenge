@@ -11,6 +11,7 @@ Below mentioned points pertain to the certain assumptions and/or constraints:
 - Any existing open source solutions can be leverage for indexing and searching text within documents.
 - Solution is to be deployed via Docker containers.
 - All search operations are case insensitive.
+- Results are displayed for partial match too.
 - Max. of 10 documents displayed after searching
 
 ## Design and Implementation
@@ -30,13 +31,16 @@ The solution is implemented via five components in docker containers conforming 
 | Dependency    | Link  |
 | ------------- |-----:|
 | Flask     |  https://flask.palletsprojects.com/en/2.0.x/ |
+| Flask-CORS    | https://flask-cors.readthedocs.io/en/latest/ |
 | Pika      | https://www.rabbitmq.com/tutorials/tutorial-one-python.html |
 | Solr |  https://solr.apache.org/  |
 | React.js | https://reactjs.org/ |
 | RabbitMQ | https://www.rabbitmq.com/ |
+| pipenv   | https://pypi.org/project/pipenv/ |
+| unittest | https://docs.python.org/3/library/unittest.html |
 
 ## Deployment
-All five docker containers are deployed to the same network (fulltextsearch) and would talk to each other via the container name (internal DNS lookup for actual IP address), this achieved via the docker compose file. All the docker images are built and then are uploaded to Docker hub. The docker compose file spawns all the containers. 
+All five docker containers are deployed to the same network (fulltextsearch) and would talk to each other via the container name (internal DNS lookup for actual IP address), this achieved via the docker compose file. All the docker images are built and then are uploaded to Docker hub(<https://hub.docker.com/u/marigala>). The docker compose file spawns all the containers. 
 
 ## API Documention
 
@@ -81,10 +85,25 @@ All five docker containers are deployed to the same network (fulltextsearch) and
 7. Select the index field to search on and enter the text to search in the search bar. Press Enter or click search icon to search.
 8. You can view the raw document for each result by clicking on the down arrow.
 
+## Unit Testing
+1. Tested the entire application using Python's unittest framework.
+2. The test.py file can be found at root/rest/test.py
+3. To the run the unit tests, please go to the path of test.py in the terminal.
+4. Make sure the docker containers are built and up.
+5. Enter `pipenv install`.
+6. Enter pipenv environment by entering `pipenv shell`.
+7. Export environmental variales
+    * `export RABBIT_ADDRESS=localhost`
+    * `export CORE_NAME=core1`
+    * `export SOLR_ADDRESS=localhost`
+8. Run `python3 test.py`.
+
+
 
 ## Note
-1. By default, four Sample JSON documents are inserted at the start of the application and the same files can be found at the root directory named **sample_input_docs.zip**.
-2. To view all documents present in Solr please select 'Any' in the field attribute and type '*' in search box and search.
+1. By default, four Sample JSON documents are inserted at the start of the application and the same files can be found at the root directory named **Initial_input_docs.zip**.
+2. More sample docs can be found in **Sample_docs**
+3. To view all documents present in Solr please select 'Any' in the field attribute and type '*' in search box and search.
 
 
 

@@ -21,11 +21,10 @@ def connectToRabbitMQ():
 
 def publishToQueue(queueName, data):
     channel = connectToRabbitMQ()
-    print("PUBLISH 1")
+    
     channel.queue_declare(queue=queueName)
-    print("PUBLISH 2")
+    
     channel.basic_publish(exchange='',
                       routing_key=queueName,
                       body=data)
-    print("PUBLISH 3")
     return 1
